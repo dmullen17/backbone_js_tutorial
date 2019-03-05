@@ -11,6 +11,7 @@
   <!-- ========= -->
 
   <div id="container">Loading...</div>
+    <div id='content'></div>
 
   <!-- ========= -->
   <!-- Libraries -->
@@ -24,7 +25,10 @@
   <!-- Javascript code -->
   <!-- =============== -->
   <script type="text/javascript">
-      var AppView = Backbone.View.extend({
+      
+$(document).ready(function() {  
+    
+      const AppView = Backbone.View.extend({
           initialize: function() {
               this.renderView();
               console.log('intialize runs by itself');
@@ -35,6 +39,44 @@
       });
       const newView = new AppView();
       //newView.renderView();
+      
+      
+      // Selecting a DOM element in a View 
+      const FirstView = Backbone.View.extend({
+          initialize: function() {
+              this.render();
+          },
+          render: function() {
+              this.$el.html('hello from the other side');
+              console.log(this.$el);
+          }
+      });
+      const fView = new FirstView({
+          el: '#content'
+      });
+    
+    // Setting a tagName, className, and id
+      const SecondView = Backbone.View.extend({
+          tagName: 'a', // this will create an anchor element
+          className: 'some-class',
+          id: 'some-id',
+          initialize: function() {
+              this.render();
+          },
+          render: function() {
+              // this.$el is a JQuery object which points to el 
+              this.$el.html('second view message');
+              // this is equivalent to the line above
+              $(this.el).html('I changed the message');
+              console.log(this.el);
+              console.log(this.$el);
+          }
+      });
+      const SView = new SecondView({
+          el: '#content'
+      });
+    
+})
 
   </script>
   

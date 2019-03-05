@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src="http://backbonejs.org/backbone-min.js"></script>
+<script>
+    
+    // Create a blank Model 
+    var Todo = Backbone.Model.extend({});
+
+    // We can then create our own concrete instance of a (Todo) model
+    // with no values at all:
+    var todo1 = new Todo();
+    // Following logs: {}
+    console.log(JSON.stringify(todo1));
+
+    // or with some arbitrary data:
+    var todo2 = new Todo({
+        title: 'Check the attributes of both model instances in the console.',
+        completed: true
+    });
+    // Following logs: {"title":"Check the attributes of both model instances in the console.","completed":true}
+    console.log(JSON.stringify(todo2));
+    
+    
+    // Initialize Method 
+    var Todo = Backbone.Model.extend({
+        initialize: function(){
+            console.log('This model has been initialized.');
+        }
+    });
+
+    
+    // Defaults 
+    var myTodo = Backbone.Model.extend({
+        // default attribuet values 
+        defaults: {
+            title: '',
+            completed: false,
+            name: 'Dom'
+        }
+    });
+    
+    var myTodoList = new myTodo(); 
+    console.log(myTodoList.toJSON());
+    console.log(JSON.stringify(myTodoList));
+    // these output of the second call is the stringified version of the first call 
+    
+    
+    // Model.set()
+    // Set one attribute at a time 
+    myTodoList.set('title', 'shopping list');
+    // Set both attributes at once
+    myTodoList.set({
+        title: 'shopping list updated',
+        completed: true
+    });
+    
+    
+    // Events and direct access 
+    var Person = Backbone.Model.extend({
+        defaults: {
+            name: '',
+            species: 'Human'
+        },
+        initialize: function() {
+            console.log(`New human ${this.attributes.name}!`);
+        }
+    });
+    var me = new Person({name: 'Dom'});
+    
+    // Add a name change handler - notice that we add this to the instance not the Model itself
+    me.on('change:name', function() {
+        console.log(`Name changed to ${this.attributes.name}`); 
+    });
+    me.set({name: 'Kobe'});
+    // If we set it manually through .attributes it won't call this function 
+    me.attributes.name = 'Snoopy';
+    me.set({name: 'Lebron'}, {silent: true});
+    console.log(me.get('name')); 
+    
+    // Add a listener in the initialize functions 
+    var Person = Backbone.Model.extend({
+        defaults: {
+            name: '',
+            species: 'Human'
+        },
+        initialize: function() {
+            console.log(`New human ${this.attributes.name}!`);
+            this.on('change', () => {console.log('attributes changed!');});
+        }
+    });
+    var me = new Person({name: 'Dom'});
+    me.set({name: 'Steph'});
+    
+
+</script>
+</body>
+</html>
