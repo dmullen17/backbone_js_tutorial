@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id='container'></div>
+<style>
+    .bkg-cyan {
+        background: rgba(0, 255, 255, 0.7);
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src="http://backbonejs.org/backbone-min.js"></script>
+<script type="text/template" id="movie-template">
+    Movies:
+    <ul>
+        <li>Title: <%= title %> </li>
+        <li>Minutes: <%= minutes %></li>
+    </ul>
+</script>
+<script>
+
+    // Define Model 
+    var MovieModel = Backbone.Model.extend({
+        defaults: {
+            title: '',
+            minutes: 0
+        }
+    });
+    var batman = new MovieModel({
+        title: 'Batman Begins',
+        minutes: 135
+    });
+    console.log(batman);
+    
+    // Define View
+    var MovieView = Backbone.View.extend({
+        el: '#container',
+        
+        events: {
+            'click li': 'toggleColor',
+            'click li': 'logClick'
+        },
+        
+        template: _.template($('#movie-template').html()),  // select template here
+        
+        render: function() {
+            this.$el.html(this.template(this.model.attributes));
+        },
+        
+        initialize: function() {
+            // Add Backbone event listener (for non-DOM events)
+            this.stopListening(this.model); // for memory purposes
+            this.listenTo(this.model, 'change', this.handleChange);
+            this.render();
+        },
+        
+        logClick: function(e) {
+            console.log('clicked!');
+            console.log(this); // entire view object 
+            console.log(e.target); // <li> element
+        },
+        
+        toggleColor: function(e) {
+            e.target.classList.toggle('bkg-cyan');
+        },
+            
+        handleChange: function(e) {
+            // console.log(e); // full View Element
+            console.log('handleChange running...');
+            this.render();
+        }
+    });
+    // create instance of view with batman model 
+    var batmanView = new MovieView({
+        model: batman
+    });
+    // Update model to see if .listenTo method was invoked 
+    batman.set('title', 'The Dark Knight');
+    
+</script>
+</body>
+</html>
