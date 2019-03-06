@@ -5,6 +5,16 @@
     <title>Title</title>
 </head>
 <body>
+    <div id='container'>Container</div>
+    
+    <div id="todo">
+    </div>
+    <script type="text/template" id="item-template">
+        <div>
+        <input id="todo_complete" type="checkbox" <%= completed ? 'checked="checked"' : '' %>>
+        <%= title %>
+        </div>
+    </script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="http://underscorejs.org/underscore-min.js"></script>
@@ -98,6 +108,86 @@
     });
     var me = new Person({name: 'Dom'});
     me.set({name: 'Steph'});
+    
+    
+    // Add an attribute specific listener
+    var Movie = Backbone.Model.extend({
+        defaults: {
+            title: '',
+            length: 0
+        },
+        initialize: function() {
+            console.log('Movie initialized');
+            this.on('change:title', () => {console.log('Movie title updated!');});
+        },
+        validate: function(attributes) {
+            if (attributes.title == '') {
+                return('Remember to set a title for your movie');
+            }
+        },
+        // we can also call .set methods in defined methods 
+        setTitle: function(newTitle) {
+            this.set('title', newTitle);
+        }
+    });
+    var batman = new Movie({title: 'Batman Begins', 'length': '150'});
+    batman.setTitle('The Dark Knight');
+    batman.set('length', 165); // function was not called
+    // Test validation 
+    var newMovie = new Movie();
+    newMovie.validate(newMovie.attributes);
+    
+    
+    //----------------------//
+    //        Views         //
+    //----------------------//
+    
+    // Create a new element for the view 
+    // Assigning className and Ids are optional 
+    var TodoView = Backbone.View.extend({
+        tagName: 'ul',
+        className: 'container homepage myClass', // we can assign multiple classes
+        id: 'toDos'
+    });
+    var TodosView = new TodoView();
+    console.log(TodosView.el);
+    
+    // Set el to a pre-existing div (<div id='container'>Container</div>)
+    var TodoView = Backbone.View.extend({
+        tagName: 'ul',
+        className: 'container homepage myClass', // we can assign multiple classes
+        id: 'toDos',
+        el: '#container'
+    });
+    var TodosView = new TodoView();
+    console.log(TodosView.el); // we can see that setting el to an element overrides the 'tagName', 'className', and 'id' attributes.
+    
+    //setElement 
+    var button1 = $('<button></button>');
+    var button2 = $('<button></button>');
+    // Define a new View 
+    var View = Backbone.View.extend({
+        events: {
+            click: function(e) {
+                console.log(View.el === e.target);
+            }
+        }
+    });
+    // Create a new instance of the view - applying it to button1
+    var view = new View({el: button1});
+    // .trigger mimics the event that you pass into it 
+    view.trigger('click');
+    
+    
+    // render and templates 
+    var ListView = Backbone.View.extend({
+        // Set the html to the output of passing the model attributes into the template
+        render: function() {
+            this.$el.html(this.template(this.model.attributes));
+            return this;
+        }
+    });
+    
     
 
 </script>
